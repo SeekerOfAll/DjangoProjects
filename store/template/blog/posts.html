@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %} Posts Archive
+{% endblock %}
+{% block body %}
+    <div class="row ">
+        <div class="col-md-12 d-flex justify-content-center mb-5">
+            {% for category in categories %}
+                <a href="{% url 'category_single' category.slug %}">
+                    <button type="button" class="btn btn-outline-black ">{{ category.title }}</button>
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-12 d-flex justify-content-start flex-wrap">
+            {% for post in post_list %}
+
+                <div class="card col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3" style="width: 18rem;">
+                    <a href="{% url 'post_single' post.slug %}" data-size="1600x1067"><img class="card-img-top"
+                                                                                           src="{{ post.image.url }}"
+                                                                                           alt="{{ post.title }}"></a>
+                    <div class="card-body" style="text-align: left">
+                        <p class="card-text">{{ post.title }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}

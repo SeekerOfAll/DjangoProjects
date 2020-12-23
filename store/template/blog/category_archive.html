@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %} Category Archive
+{% endblock %}
+{% block body %}
+    <div class="row ">
+        <div class="col-md-12 d-flex justify-content-center mb-5">
+            {% for category in category_list %}
+                <a href="{% url 'category_single' category.slug %}">
+                    <button type="button" class="btn btn-outline-black ">{{ category.title }}</button>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
