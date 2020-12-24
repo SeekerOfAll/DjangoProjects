@@ -1,13 +1,15 @@
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.template import loader
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from .models import Post, Category
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 from blog.forms import UserRegistrationForm, CommentForm, UserLoginForm
 from django.contrib.auth.models import User
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 from django.views.generic import DetailView
 
 
@@ -84,13 +86,23 @@ class PostDetail(DetailView):
 
 class CategoryDetail(ListView):
     model = Category
+    queryset = Category.objects.all()
     template_name = 'blog/category_detail.html'
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        category = context['category']
-        context['posts'] = category.post.all()
-        return context
+    #
+    # def get_context_data(self, **kwargs):
+    #     # Call the base implementation first to get a context
+    #     context = super(CategoryList, self).get_context_data(**kwargs)
+    #     # Add in the category
+    #     context['category'] = self.category
+    #     return context
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(CategoryDetail, self).get_context_data(**kwargs)
+    #     # category = context['category']
+    #     # context['categories'] = category.post.all()
+    #     context['categories'] = self.category
+    #     return context
 
 
 # def category_single(request, pk):
@@ -126,23 +138,28 @@ class CategoryArchive(ListView):
 #         '<ul>{}</ul>'.format(links))
 #     return HttpResponse(blog)
 
+class SignInView(LoginView):
+    # authentication_form = UserLoginForm
+    template_name = 'blog/login.html'
+    # redirect_authenticated_user = '/'
 
-def login_view(request):
-    form = UserLoginForm(request.POST)
-    if form.is_valid():
-        username = form.cleaned_data.get('username', None)
-        password = form.cleaned_data.get('password', None)
-        user = authenticate(request, username=username, password=password)
-        if user and user.is_active:
-            login(request, user)
-            return redirect('posts_archive')
-        else:
-            context = {'form': form}
-            return render(request, 'blog/login.html', context)
-    else:
-        context = {'form': form}
-    return render(request, 'blog/login.html', context)
 
+# def login_view(request):
+#     form = UserLoginForm(request.POST)
+#     if form.is_valid():
+#         username = form.cleaned_data.get('username', None)
+#         password = form.cleaned_data.get('password', None)
+#         user = authenticate(request, username=username, password=password)
+#         if user and user.is_active:
+#             login(request, user)
+#             return redirect('posts_archive')
+#         else:
+#             context = {'form': form}
+#             return render(request, 'blog/login.html', context)
+#     else:
+#         context = {'form': form}
+#     return render(request, 'blog/login.html', context)
+#
 
 # def login_view(request):
 #     if request.user.is_authenticated:
@@ -160,10 +177,14 @@ def login_view(request):
 #
 #     return render(request, 'blog/login.html', context={})
 
+class LogoutView(LogoutView):
+    template_name = 'blog/login.html'
+    # redirect_field_name = 'login/'
 
-def logout_view(request):
-    logout(request)
-    return redirect('posts_archive')
+
+# def logout_view(request):
+#     logout(request)
+#     return redirect('posts_archive')
 
 
 # def register_view(request):
@@ -200,18 +221,29 @@ def logout_view(request):
 #         return render(request, 'blog/register.html', context)
 
 # =================================================================================
-def register_view(request):
-    form = UserRegistrationForm(request.POST)
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save(commit=True)
-            return redirect('login')
-        else:
-            context = {'form': form}
-            return render(request, 'blog/register.html', context)
-    else:
-        context = {'form': form}
-    return render(request, 'blog/register.html', context)
+# class SignUpView(SuccessMessageMixin, CreateView):
+#     template_name = 'blog/register.html'
+#     success_url = reverse_lazy('login')
+#     form_class = UserRegistrationForm
+#     success_message = "Your profile was created successfully"
+
+class SignUpView(CreateView):
+    template_name = 'blog/register.html'
+    success_url = reverse_lazy('login')
+    form_class = UserRegistrationForm
+
+# def register_view(request):
+#     form = UserRegistrationForm(request.POST)
+#     if request.method == 'POST':
+#         if form.is_valid():
+#             form.save(commit=True)
+#             return redirect('login')
+#         else:
+#             context = {'form': form}
+#             return render(request, 'blog/register.html', context)
+#     else:
+#         context = {'form': form}
+#     return render(request, 'blog/register.html', context)
 
 # def register_view(request):
 #     context = {'form': UserRegistrationForm()}
