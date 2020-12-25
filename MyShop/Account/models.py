@@ -77,10 +77,11 @@ class Email(models.Model):
                              related_query_name='Email', on_delete=models.CASCADE)
 
     class Meta:
-        pass
+        verbose_name = _('email')
+        verbose_name_plural = _('emails')
 
     def __str__(self):
-        pass
+        return self.subject
 
 
 class Address(models.Model):
@@ -92,10 +93,11 @@ class Address(models.Model):
                              related_query_name='Address', on_delete=models.CASCADE)
 
     class Meta:
-        pass
+        verbose_name = _('address')
+        verbose_name_plural = _('addresses')
 
     def __str__(self):
-        pass
+        return self.city
 
 
 class Likes(models.Model):
@@ -127,7 +129,8 @@ class Shop(models.Model):
                              related_query_name='Shop', on_delete=models.CASCADE)
 
     class Meta:
-        pass
+        verbose_name = _('shop')
+        verbose_name_plural = _('shops')
 
     def __str__(self):
-        pass
+        return self.name

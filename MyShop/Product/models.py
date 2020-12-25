@@ -16,7 +16,8 @@ class Product(models.Model):
     detail = models.CharField(_('Detail'), max_length=150)
 
     class Meta:
-        pass
+        verbose_name = _('product')
+        verbose_name_plural = _('products')
 
     def __str__(self):
         return self.name
@@ -31,7 +32,8 @@ class ShopProduct(models.Model):
     quantity = models.CharField(_('Quantity'), max_length=50)
 
     class Meta:
-        pass
+        verbose_name = _('shop_product')
+        verbose_name_plural = _('shops_products')
 
     def __str__(self):
         return self.price
@@ -46,7 +48,8 @@ class Comment(models.Model):
                                 related_query_name='Comment', on_delete=models.CASCADE)
 
     class Meta:
-        pass
+        verbose_name = _('comment')
+        verbose_name_plural = _('comments')
 
     def __str__(self):
         return self.product.name
@@ -59,7 +62,8 @@ class Image(models.Model):
                               max_length=100)
 
     class Meta:
-        pass
+        verbose_name = _('image')
+        verbose_name_plural = _('images')
 
 
 class Brand(models.Model):
@@ -69,7 +73,8 @@ class Brand(models.Model):
                               max_length=100)
 
     class Meta:
-        pass
+        verbose_name = _('brand')
+        verbose_name_plural = _('brands')
 
     def __str__(self):
         return self.name
@@ -85,7 +90,8 @@ class Category(models.Model):
                                , related_name='children', related_query_name='children')
 
     class Meta:
-        pass
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
 
     def __str__(self):
         return self.name
@@ -98,7 +104,8 @@ class ProductMeta(models.Model):
     value = models.DecimalField(max_digits=4, decimal_places=2)
 
     class Meta:
-        pass
+        verbose_name = _('product_meta')
+        verbose_name_plural = _('product_metas')
 
     def __str__(self):
         return self.label
