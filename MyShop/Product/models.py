@@ -12,7 +12,7 @@ class Product(models.Model):
     category = models.ForeignKey('Product.Category', verbose_name='Category', related_name='Product',
                                  related_query_name='Product', on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=150)
-    image = models.ImageField(_('Image'), upload_to='product/image/', height_field=100, width_field=100, max_length=100)
+    image = models.ImageField(_('Image'), upload_to='product/image/', max_length=100)
     detail = models.CharField(_('Detail'), max_length=150)
 
     class Meta:
@@ -58,8 +58,7 @@ class Comment(models.Model):
 class Image(models.Model):
     product = models.ForeignKey("Product.Product", verbose_name=_("Product"), related_name='Image',
                                 related_query_name='Image', on_delete=models.CASCADE)
-    image = models.ImageField(_('Image'), upload_to='image/image/', height_field=100, width_field=100,
-                              max_length=100)
+    image = models.ImageField(_('Image'), upload_to='image/image/', max_length=100)
 
     class Meta:
         verbose_name = _('image')
@@ -69,8 +68,7 @@ class Image(models.Model):
 class Brand(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     detail = models.TextField(_('Detail'), blank=False, help_text="Enter Your Brand Detail")
-    image = models.ImageField(_('Image'), upload_to='brand/image/', height_field=100, width_field=100,
-                              max_length=100)
+    image = models.ImageField(_('Image'), upload_to='brand/image/', max_length=100)
 
     class Meta:
         verbose_name = _('brand')
@@ -84,8 +82,7 @@ class Category(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     slug = models.SlugField(_("Slug"), db_index=True, unique=True)
     detail = models.TextField(_('Detail'), blank=True, help_text="Enter Your Category Detail")
-    image = models.ImageField(_('Image'), upload_to='category/image/', height_field=100, width_field=100,
-                              max_length=100)
+    image = models.ImageField(_('Image'), upload_to='category/image/', max_length=100)
     parent = models.ForeignKey('self', verbose_name=_("Parent"), on_delete=models.SET_NULL, null=True, blank=True
                                , related_name='children', related_query_name='children')
 

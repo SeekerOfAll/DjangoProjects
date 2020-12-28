@@ -5,9 +5,30 @@ from .models import User, Shop, Address, Email
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 
-# @admin.register(User)
-# class UserAdmin(BaseUserAdmin):
-#     list_display = ('username', 'email')
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    list_display = ('email', 'first_name', 'last_name', 'mobile')
+    fieldsets = [('Users', {'fields': ['first_name', 'last_name', 'email', 'mobile']})]
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name', 'mobile', 'password1', 'password2')
+        }),
+    )
+    search_fields = ['first_name', 'last_name', 'email']
+    list_per_page = 5
+    ordering = ('first_name',)
+
+    def make_published(self, request, queryset):
+        updated = queryset.update(draft=False)
+        self.message_user(request, ngettext(
+            '%d User was successfully Entered.',
+            '%d User was successfully Entered.',
+            updated,
+        ) % updated, messages.SUCCESS)
+
+    make_published.short_description = "Mark selected User as Entered"
+    actions = [make_published]
 
 
 # Register your models here.

@@ -123,7 +123,7 @@ class Notification(models.Model):
 class Shop(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     description = models.CharField(_('Description'), max_length=50)
-    image = models.ImageField(_('Image'), upload_to='shop/image/', height_field=100, width_field=100, max_length=100)
+    image = models.ImageField(_('Image'), upload_to='shop/image/', max_length=100)
     slug = models.SlugField(_("Slug"), db_index=True, unique=True)
     user = models.ForeignKey("Account.User", verbose_name=_("User"), related_name='Shop',
                              related_query_name='Shop', on_delete=models.CASCADE)
