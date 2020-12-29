@@ -27,7 +27,7 @@ class Post(models.Model):
     publish_time = models.DateTimeField(_("Publish at"), db_index=True)
     draft = models.BooleanField(_("Draft"), default=True, db_index=True)
     image = models.ImageField(_("Image"), upload_to='post/images')
-    category = models.ForeignKey(Category, related_name='category',
+    category = models.ForeignKey(Category, related_name='posts', verbose_name="Category",
                                  on_delete=models.SET_NULL, null=True, blank=True)
     author = models.ForeignKey(User, related_name='posts', related_query_name='children', verbose_name=_("Author"),
                                on_delete=models.CASCADE)

@@ -1,5 +1,6 @@
-from django.urls import path, re_path
-from .views import CategoryArchive, CategoryDetail, SignInView, LogoutView, SignUpView, PostArchive, PostDetail
+from django.urls import path
+from .views import CategoryArchive, like_comment, CategoryDetail, SignInView, LogoutView, SignUpView, PostArchive, \
+    PostDetail, create_comment
 
 urlpatterns = [
     # path('', home, name='posts_archive'),
@@ -17,4 +18,6 @@ urlpatterns = [
     path('login/', SignInView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', SignUpView.as_view(), name='register'),
+    path('like_comment/', like_comment, name='like_comment'),
+    path('comments/', create_comment, name='add_comment'),
 ]

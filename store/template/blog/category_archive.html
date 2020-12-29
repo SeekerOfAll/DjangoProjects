@@ -12,11 +12,5 @@
             {% endfor %}
         </div>
     </div>
-    {% for category in object_list %}
-        Name: {{ category }}
-        {% for cat in category.post.all %}
-            {{ post }}
 
-        {% endfor %}
-    {% endfor %}
 {% endblock %}

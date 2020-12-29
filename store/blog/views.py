@@ -1,13 +1,14 @@
+import json
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse, Http404
-from django.shortcuts import render, get_object_or_404
-from django.template import loader
-from django.urls import reverse, reverse_lazy
-from .models import Post, Category
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect
-from blog.forms import UserRegistrationForm, CommentForm, UserLoginForm
+
+from django.http import HttpResponse
+
+from django.urls import reverse_lazy
+from django.views.decorators.csrf import csrf_exempt
+
+from .models import Post, Category, Comment, CommentLike
+
+from blog.forms import CommentForm, UserRegistrationForm
 from django.contrib.auth.models import User
 from django.views.generic import ListView, CreateView
 from django.views.generic import DetailView
@@ -24,6 +25,87 @@ class PostArchive(ListView):
         return context
 
 
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'blog/post_single.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        post = context['post']
+        context['form'] = CommentForm()
+        context['comments'] = post.comments.filter(is_confirmed=True)
+        context['settings'] = post.post_setting
+        context['category'] = post.category
+        context['author'] = 'post.author'
+        context['categories'] = Category.objects.all()
+        return context
+
+
+class CategoryDetail(DetailView):
+    model = Category
+    template_name = 'blog/category_detail.html'
+
+
+class CategoryArchive(ListView):
+    model = Category
+    queryset = Category.objects.all()
+    template_name = 'blog/category_archive.html'
+
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data()
+    #     context['categories'] = Category.objects.all()
+    #     return context
+
+
+class SignInView(LoginView):
+    # authentication_form = UserLoginForm
+    template_name = 'blog/login.html'
+    # redirect_authenticated_user = '/'
+
+
+class LogoutView(LogoutView):
+    template_name = 'blog/login.html'
+    # redirect_field_name = 'login/'
+
+
+class SignUpView(CreateView):
+    template_name = 'blog/register.html'
+    success_url = reverse_lazy('login')
+    form_class = UserRegistrationForm
+
+
+@csrf_exempt
+def create_comment(request):
+    data = json.loads(request.body)
+    user = request.user
+    try:
+        comment = Comment.objects.create(post_id=data['post_id'], content=data['content'], author=user)
+        response = {"comment_id": comment.id, "content": comment.content, 'dislike_count': 0, 'like_count': 0,
+                    'full_name': user.get_full_name()}
+        return HttpResponse(json.dumps(response), status=201)
+    except:
+        response = {"error": 'error'}
+        return HttpResponse(json.dumps(response), status=400)
+
+
+@csrf_exempt
+def like_comment(request):
+    data = json.loads(request.body)
+    print(data)
+    user = request.user
+    try:
+        comment = Comment.objects.get(id=data['comment_id'])
+    except Comment.DoesNotExist():
+        return HttpResponse("comment does not exit", status=404)
+    comment_like = CommentLike.objects.filter(author=user, comment=comment).first()
+    if comment_like:
+        comment_like.condition = data['condition']
+        comment_like.save()
+    else:
+        CommentLike.objects.create(condition=data['condition'], author=user, comment=comment)
+    response = {"like_count": comment.like_count, "dislike_count": comment.dislike_count}
+    return HttpResponse(json.dumps(response), status=201)
+
 # def home(request):
 #     author = request.GET.get('author', None)
 #     category = request.GET.get('category', None)
@@ -38,24 +120,6 @@ class PostArchive(ListView):
 #         "categories": categories,
 #     }
 #     return render(request, 'blog/posts.html', context)
-
-
-class PostDetail(DetailView):
-    model = Post
-    # queryset = Post.objects.all()
-    template_name = 'blog/post_single.html'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data()
-        post = context['post']
-        context['form'] = CommentForm()
-        context['comments'] = post.comments.filter(is_confirmed=True)
-        context['settings'] = post.post_setting
-        context['category'] = post.category
-        context['author'] = 'post.author'
-        context['categories'] = Category.objects.all()
-        return context
-
 
 # def post_single(request, pk):
 #     try:
@@ -83,26 +147,20 @@ class PostDetail(DetailView):
 #             context['form'] = form
 #
 #     return render(request, 'blog/post_single.html', context)
+#
+# def get_context_data(self, **kwargs):
+#     # Call the base implementation first to get a context
+#     context = super(CategoryList, self).get_context_data(**kwargs)
+#     # Add in the category
+#     context['category'] = self.category
+#     return context
 
-class CategoryDetail(ListView):
-    model = Category
-    queryset = Category.objects.all()
-    template_name = 'blog/category_detail.html'
-
-    #
-    # def get_context_data(self, **kwargs):
-    #     # Call the base implementation first to get a context
-    #     context = super(CategoryList, self).get_context_data(**kwargs)
-    #     # Add in the category
-    #     context['category'] = self.category
-    #     return context
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(CategoryDetail, self).get_context_data(**kwargs)
-    #     # category = context['category']
-    #     # context['categories'] = category.post.all()
-    #     context['categories'] = self.category
-    #     return context
+# def get_context_data(self, **kwargs):
+#     context = super(CategoryDetail, self).get_context_data(**kwargs)
+#     # category = context['category']
+#     # context['categories'] = category.post.all()
+#     context['categories'] = self.category
+#     return context
 
 
 # def category_single(request, pk):
@@ -117,18 +175,6 @@ class CategoryDetail(ListView):
 #         '<ul>{}</ul>'.format(links), reverse('categories_archive'))
 #     return HttpResponse(blog)
 
-
-class CategoryArchive(ListView):
-    model = Category
-    queryset = Category.objects.all()
-    template_name = 'blog/category_archive.html'
-
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data()
-    #     context['categories'] = Category.objects.all()
-    #     return context
-
-
 # def categories_archive(request):
 #     categories = Category.objects.all()
 #     links = ''.join(
@@ -137,12 +183,6 @@ class CategoryArchive(ListView):
 #     blog = '<html><head><title>post archive</title></head>{}</body></html>'.format(
 #         '<ul>{}</ul>'.format(links))
 #     return HttpResponse(blog)
-
-class SignInView(LoginView):
-    # authentication_form = UserLoginForm
-    template_name = 'blog/login.html'
-    # redirect_authenticated_user = '/'
-
 
 # def login_view(request):
 #     form = UserLoginForm(request.POST)
@@ -176,11 +216,6 @@ class SignInView(LoginView):
 #             return redirect('login')
 #
 #     return render(request, 'blog/login.html', context={})
-
-class LogoutView(LogoutView):
-    template_name = 'blog/login.html'
-    # redirect_field_name = 'login/'
-
 
 # def logout_view(request):
 #     logout(request)
@@ -226,11 +261,6 @@ class LogoutView(LogoutView):
 #     success_url = reverse_lazy('login')
 #     form_class = UserRegistrationForm
 #     success_message = "Your profile was created successfully"
-
-class SignUpView(CreateView):
-    template_name = 'blog/register.html'
-    success_url = reverse_lazy('login')
-    form_class = UserRegistrationForm
 
 # def register_view(request):
 #     form = UserRegistrationForm(request.POST)
