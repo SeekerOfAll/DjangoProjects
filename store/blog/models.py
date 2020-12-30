@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import User
-from .validators import validate_password, validate_username
+from django.conf import settings
+from account.validators import validate_password, validate_username
 
 
 class Category(models.Model):
@@ -29,7 +29,7 @@ class Post(models.Model):
     image = models.ImageField(_("Image"), upload_to='post/images')
     category = models.ForeignKey(Category, related_name='posts', verbose_name="Category",
                                  on_delete=models.SET_NULL, null=True, blank=True)
-    author = models.ForeignKey(User, related_name='posts', related_query_name='children', verbose_name=_("Author"),
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='posts', related_query_name='children', verbose_name=_("Author"),
                                on_delete=models.CASCADE)
 
     class Meta:
@@ -59,7 +59,7 @@ class Comment(models.Model):
     update_at = models.DateTimeField(_("Update at"), auto_now=True)
     post = models.ForeignKey("blog.Post", verbose_name=_("Post"), related_name="comments",
                              related_query_name="comments", on_delete=models.CASCADE)
-    author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Author"), on_delete=models.CASCADE)
     is_confirmed = models.BooleanField(_("Confirm"), default=True)
 
     class Meta:
@@ -87,7 +87,7 @@ class CommentLike(models.Model):
     update_at = models.DateTimeField(_("Update at"), auto_now=True)
     comment = models.ForeignKey("blog.Comment", verbose_name=_("Comment"), related_name='comment_like',
                                 related_query_name='comment_like', on_delete=models.CASCADE)
-    author = models.ForeignKey(User, verbose_name=_("Author"), on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Author"), on_delete=models.CASCADE)
 
     class Meta:
         unique_together = [['author', 'comment']]

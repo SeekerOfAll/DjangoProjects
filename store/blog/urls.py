@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CategoryArchive, like_comment, CategoryDetail, SignInView, LogoutView, SignUpView, PostArchive, \
+from .views import CategoryArchive, like_comment, CategoryDetail,  PostArchive, \
     PostDetail, create_comment
 
 urlpatterns = [
@@ -15,9 +15,6 @@ urlpatterns = [
     # path('categories/<slug:pk>/', category_single, name='category_single'),
     path('categories/<slug:slug>/', CategoryDetail.as_view(), name='category_single'),  # class base view
 
-    path('login/', SignInView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('register/', SignUpView.as_view(), name='register'),
     path('like_comment/', like_comment, name='like_comment'),
     path('comments/', create_comment, name='add_comment'),
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Category, Comment, CommentLike, User, PostSetting
+from .models import Post, Category, Comment, CommentLike, PostSetting
 from django.utils.translation import ngettext
 from django.contrib import messages
 

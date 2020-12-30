@@ -1,17 +1,13 @@
 import json
-from django.contrib.auth.views import LoginView, LogoutView
-
 from django.http import HttpResponse
-
-from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
-
 from .models import Post, Category, Comment, CommentLike
-
-from blog.forms import CommentForm, UserRegistrationForm
-from django.contrib.auth.models import User
+from blog.forms import CommentForm
 from django.views.generic import ListView, CreateView
 from django.views.generic import DetailView
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class PostArchive(ListView):
@@ -57,21 +53,6 @@ class CategoryArchive(ListView):
     #     return context
 
 
-class SignInView(LoginView):
-    # authentication_form = UserLoginForm
-    template_name = 'blog/login.html'
-    # redirect_authenticated_user = '/'
-
-
-class LogoutView(LogoutView):
-    template_name = 'blog/login.html'
-    # redirect_field_name = 'login/'
-
-
-class SignUpView(CreateView):
-    template_name = 'blog/register.html'
-    success_url = reverse_lazy('login')
-    form_class = UserRegistrationForm
 
 
 @csrf_exempt
