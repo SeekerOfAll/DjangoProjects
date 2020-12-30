@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 
 # Create your models here.
@@ -42,7 +42,7 @@ class ShopProduct(models.Model):
 class Comment(models.Model):
     text = models.TextField(_('Text'), blank=True, help_text="Enter Your Comment")
     rate = models.IntegerField(_('Rate'), blank=True)
-    user = models.ForeignKey("Account.User", verbose_name=_("User"), related_name='Comment',
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name='Comment',
                              related_query_name='Comment', on_delete=models.CASCADE)
     product = models.ForeignKey("Product.Product", verbose_name=_("Product"), related_name='Comment',
                                 related_query_name='Comment', on_delete=models.CASCADE)

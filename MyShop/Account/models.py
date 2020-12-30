@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, AbstractUser
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 
 # Create your models here.
@@ -73,7 +74,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Email(models.Model):
     subject = models.CharField(_('Subject'), max_length=150)
     body = models.CharField(_('Body'), max_length=150)
-    user = models.ForeignKey("Account.User", verbose_name=_("User"), related_name='Email',
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name='Email',
                              related_query_name='Email', on_delete=models.CASCADE)
 
     class Meta:
@@ -89,7 +90,7 @@ class Address(models.Model):
     street = models.CharField(_('Street'), max_length=50)
     alley = models.CharField(_('Alley'), max_length=50)
     zip_code = models.CharField(_('Zip_Code'), max_length=50)
-    user = models.ForeignKey("Account.User", verbose_name=_("User"), related_name='Address',
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name='Address',
                              related_query_name='Address', on_delete=models.CASCADE)
 
     class Meta:
@@ -125,7 +126,7 @@ class Shop(models.Model):
     description = models.CharField(_('Description'), max_length=50)
     image = models.ImageField(_('Image'), upload_to='shop/image/', max_length=100)
     slug = models.SlugField(_("Slug"), db_index=True, unique=True)
-    user = models.ForeignKey("Account.User", verbose_name=_("User"), related_name='Shop',
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("User"), related_name='Shop',
                              related_query_name='Shop', on_delete=models.CASCADE)
 
     class Meta:
