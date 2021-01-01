@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import CategoryArchive, like_comment, CategoryDetail,  PostArchive, \
+
+from .api import post_list, post_detail, comment_list, comment_detail
+from .views import CategoryArchive, like_comment, CategoryDetail, PostArchive, \
     PostDetail, create_comment
 
 urlpatterns = [
@@ -17,4 +19,8 @@ urlpatterns = [
 
     path('like_comment/', like_comment, name='like_comment'),
     path('comments/', create_comment, name='add_comment'),
+    path('api/posts/', post_list, name='post_list'),
+    path('api/posts/<int:pk>/', post_detail, name='post_detail'),
+    path('api/comments/', comment_list, name='comment_list'),
+    path('api/comments/<int:pk>/', comment_detail, name='comment_detail'),
 ]

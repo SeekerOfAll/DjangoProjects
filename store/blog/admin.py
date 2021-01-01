@@ -33,6 +33,8 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('draft', 'category', 'author')
     date_hierarchy = 'publish_time'
     inlines = [PostSettingInline]
+    list_per_page = 5
+
 
     def make_published(self, request, queryset):
         updated = queryset.update(draft=False)
