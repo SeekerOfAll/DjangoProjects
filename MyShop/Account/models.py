@@ -101,26 +101,6 @@ class Address(models.Model):
         return self.city
 
 
-class Likes(models.Model):
-    pass
-
-    class Meta:
-        pass
-
-    def __str__(self):
-        pass
-
-
-class Notification(models.Model):
-    pass
-
-    class Meta:
-        pass
-
-    def __str__(self):
-        pass
-
-
 class Shop(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     description = models.CharField(_('Description'), max_length=50)

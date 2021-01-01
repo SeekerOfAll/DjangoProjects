@@ -6,10 +6,10 @@ from django.conf import settings
 # Create your models here.
 
 class Product(models.Model):
-    brand = models.ForeignKey('Product.Brand', verbose_name='Brand', related_name='Product',
+    brand = models.ForeignKey('Product.Brand', verbose_name=_("Brand"), related_name='Product',
                               related_query_name='Product', on_delete=models.CASCADE)
     slug = models.SlugField(_("Slug"), db_index=True, unique=True)
-    category = models.ForeignKey('Product.Category', verbose_name='Category', related_name='Product',
+    category = models.ForeignKey('Product.Category', verbose_name=_("Category"), related_name='Product',
                                  related_query_name='Product', on_delete=models.CASCADE)
     name = models.CharField(_('Name'), max_length=150)
     image = models.ImageField(_('Image'), upload_to='product/image/', max_length=100)
@@ -22,11 +22,21 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def like_count(self):
+        q = Likes.objects.filter(comment=self, condition=True)
+        return q.count()
+
+    @property
+    def dislike_count(self):
+        q = Likes.objects.filter(comment=self, condition=False)
+        return q.count()
+
 
 class ShopProduct(models.Model):
-    shop = models.ForeignKey('Account.Shop', verbose_name='Shop', related_name='ShopProduct',
+    shop = models.ForeignKey('Account.Shop', verbose_name=_('Shop'), related_name='ShopProduct',
                              related_query_name='ShopProduct', on_delete=models.CASCADE)
-    product = models.ForeignKey('Product.Product', verbose_name='Product', related_name='ShopProduct',
+    product = models.ForeignKey('Product.Product', verbose_name=_('Product'), related_name='ShopProduct',
                                 related_query_name='ShopProduct', on_delete=models.CASCADE)
     price = models.CharField(_('Price'), max_length=50)
     quantity = models.CharField(_('Quantity'), max_length=50)
@@ -69,6 +79,7 @@ class Brand(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     detail = models.TextField(_('Detail'), blank=False, help_text="Enter Your Brand Detail")
     image = models.ImageField(_('Image'), upload_to='brand/image/', max_length=100)
+    slug = models.SlugField(_("Slug"), db_index=True, unique=True)
 
     class Meta:
         verbose_name = _('brand')
@@ -106,6 +117,21 @@ class ProductMeta(models.Model):
 
     def __str__(self):
         return self.label
+
+
+class Likes(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("user"), on_delete=models.CASCADE,
+                             related_name='like', related_query_name='like')
+    product = models.ForeignKey('Product.Product', verbose_name=_("product"), on_delete=models.CASCADE,
+                                related_name='product',related_query_name='product')
+    condition = models.BooleanField(_("Condition"))
+
+    class Meta:
+        verbose_name = _('like')
+        verbose_name_plural = _('likes')
+
+    def __str__(self):
+        return self.product.name
 
 
 class Page(models.Model):

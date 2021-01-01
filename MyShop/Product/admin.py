@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ShopProduct, Comment, Image, Brand, Category, ProductMeta
+from .models import Product, ShopProduct, Comment, Image, Brand, Category, ProductMeta, Likes
 from django.utils.translation import ngettext
 from django.contrib import messages
 
@@ -99,10 +99,10 @@ class ImageAdmin(admin.ModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    field = ['name', 'detail', 'image']
-    list_display = ('name', 'detail')
-    list_filter = ['name']
-    search_fields = ['name']
+    field = ['name', 'slug', 'detail', 'image']
+    list_display = ('name', 'slug', 'detail')
+    list_filter = ['name', 'slug']
+    search_fields = ['name', 'slug']
     list_per_page = 5
 
     def make_published(self, request, queryset):
@@ -160,3 +160,12 @@ class ProductMetaAdmin(admin.ModelAdmin):
 
     make_published.short_description = "Mark selected ProductMeta as Entered"
     actions = [make_published]
+
+
+@admin.register(Likes)
+class LikesAdmin(admin.ModelAdmin):
+    field = ['user', 'product', 'condition']
+    list_display = ('user', 'product', 'condition')
+    list_filter = ['condition']
+    search_fields = ['condition']
+    list_per_page = 5
