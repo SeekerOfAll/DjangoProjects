@@ -1,17 +1,30 @@
- {% load static %}
+{% load static %}
 {{ form.non_field_errors }}
-{% for field in form %}
 
-    <div class="form-group">
-        {{ field.label_tag }} {{ field }}
-        {% if field.help_text %}
-            <small class="form-text text-muted">{{ field.help_text|safe }}</small>
-        {% endif %}
-{#        {% for error in field.errors %}#}
-{#            <div class="alert alert-danger mt-2" role="alert">#}
-{#                {{ error }}#}
-{#            </div>#}
-{#        {% endfor %}#}
 
-    </div>
-{% endfor %}
+{#    <div class="comment">#}
+{#        <input type="text" name="" id="" placeholder="Comment" class="comment">#}
+{#    </div>#}
+<div class="login">
+    <h1>Login Here</h1>
+    {% for field in form %}
+        <p>{{ field.label_tag }} {{ field }}</p>
+    {% endfor %}
+    <p class="remember_me">
+        <label>
+            <input type="checkbox" name="remember_me" id="remember_me">
+            Remember me on this computer
+        </label>
+    </p>
+    {% if field.help_text %}
+        <small class="form-text text-muted"></small>
+    {% endif %}
+
+</div>
+{#    <div class="form-group">#}
+{#        {{ field.label_tag }} {{ field }}#}
+{#        {% if field.help_text %}#}
+{#            <small class="form-text text-muted"></small>#}
+{#        {% endif %}#}
+{##}
+{#    </div>#}

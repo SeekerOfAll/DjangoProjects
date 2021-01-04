@@ -5,63 +5,121 @@
     zoomit || {{ post.title }}
 {% endblock %}
 {% block body %}
-    <div class="container">
-        <div class="card" style="width:100%">
-            <img class="card-img-top" src="{{ post.image.url }}" alt="Card image cap">
-            <div class="card-body">
-                <h5 class="card-title">{{ post.title }}</h5>
-                {% if settings.author %}
-                    <p>
-                        نویسنده: {{ author.first_name }} {{ author.last_name }}
-                    </p>
-                {% endif %}
-                <p> دسته بندی: <a href="{% url 'category_single' category.slug %}">{{ category.title }}</a>
-                    تاریخ انتشار: {{ post.publish_time }}
-                </p>
-                <p class="card-text">
-                    {{ post.content }}
-                </p>
-                {% if settings.allow_discussion %}
-                    {% if settings.comment %}
-                        <form id="comment_form">
-                            {% csrf_token %}
-                            {% include 'component/form.html' %}
-                            <input type="submit" value="ok">
-                        </form>
-                    {% endif %}
-                    <div id="comment_container">
-                        {% for comment in comments %}
-                            <div>
-                                {{ comment.author.full_name }}
-                                <div class="mt-3">
-                                    <div>
-                                        {{ comment.content }}
-                                    </div>
-                                    <div>
-                                        dislikse:<span
-                                            id="dislike_count_container{{ comment.id }}">{{ comment.dislike_count }}</span>
-                                        <br>
-                                        likes:<span
-                                            id="like_count_container{{ comment.id }}">{{ comment.like_count }}</span>
+
+    <section class="single-blog-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="border-top">
+                        <div class="col-md-8">
+                            <div class="blog-area">
+                                <div class="blog-area-part">
+                                    <h2>{{ post.title }}</h2>
+                                    {% if settings.author %}
+                                        <p>
+                                            نویسنده: {{ post.author.full_name }}
+                                        </p>
+                                    {% endif %}
+                                    <p> دسته بندی: <a
+                                            href="{% url 'category_single' category.slug %}">{{ category.title }}</a>
+                                    </p>
+                                    <img src="{{ post.image.url }}" alt="">
+                                    <div class="for-style">
+                                        <p><span class="drop_caps">{{ post.content|first }}</span></p>
                                     </div>
 
-                                    <div>
-                                        <button onclick="likeComment({{ comment.id }})">
-                                            like
-                                        </button>
-                                        <button onclick="likeComment({{ comment.id }} , false)">
-                                            dislike
-                                        </button>
-                                    </div>
+                                    <p></p>
+                                    <h3><i class="fa fa-quote-left" aria-hidden="true"></i>{{ post.content|slice:'1:' }}<i
+                                            class="fa fa-quote-right" aria-hidden="true"></i></h3>
+                                </div>
+                                <div class="commententries">
+                                    {% if settings.allow_discussion %}
+                                        <h3>Comments</h3>
+                                        <ul class="commentlist" id="comment_container">
+                                            {% for comment in comments %}
+                                                <li>
+                                                    <article class="comment">
+                                                        <section class="comment-details">
+                                                            <div class="author-name">
+                                                                <h5><a href="#">{{ comment.author.full_name }}</a></h5>
+                                                                <p>{{ comment.update_at }}</p>
+                                                            </div>
+                                                            <div class="comment-body">
+                                                                <p>{{ comment.content }}</p>
+                                                            </div>
+                                                            <div class="reply">
+                                                                <p>
+                                                            <span id="dislike_count_container{{ comment.id }}">
+                                                                <i onclick="likeComment({{ comment.id }} , false)"
+                                                                   class="fa fa-thumbs-down"></i>{{ comment.dislike_count }}
+                                                            </span>
+                                                                    <span id="like_count_container{{ comment.id }}">
+                                                                <i onclick="likeComment({{ comment.id }})"
+                                                                   class="fa fa-thumbs-up"></i>{{ comment.like_count }}
+                                                            </span>
+                                                                    <span>
+                                                                <i class="fa fa-reply" aria-hidden="true"></i>
+                                                            </span>
+                                                                </p>
+                                                            </div>
+                                                        </section>
+                                                    </article>
+
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                        {% if settings.comment %}#}
+                                            <form id="comment_form">
+                                                {% csrf_token %}
+                                                {% include 'component/form.html' %}
+                                                <div class="post">
+                                                    <input type="submit" value="Post">
+                                                </div>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
                                 </div>
                             </div>
-                        {% endfor %}
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="button-group filters-button-group">
+                                <button data-filter=".recent" class="button is-checked">Recent</button>
+                                <button data-filter=".popular" class="button">popular</button>
+                            </div>
+
+                            <div class="grid" style="position: relative; height: 1221.93px;">
+                                {% for post in post_list %}
+                                    <div class="portfolio-item recent" style="position: absolute; left: 0px; top: 0px;">
+                                        <img src="{{ post.image.url }}" alt="">
+                                        <div class="portfolio-text">
+                                            <h5><a href="{% url 'post_single' post.slug %}"
+                                                   data-size="1600x1067">{{ post.title }}</a></h5>
+                                            <p>{{ post.author.full_name }}<span>|</span>{{ post.publish_time }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="tags">
+                                <h2 class="sidebar-title">categories</h2>
+                                {% for category in categories %}
+                                    <p><a href="{% url 'category_single' category.slug %}">{{ category.title }}</a></p>
+                                {% endfor %}
+                            </div>
+                            <div class="newsletter">
+                                <h2 class="sidebar-title">Subscribe To oUR nEWSLETTER</h2>
+                                <form action="#" method="post">
+                                    <input type="email" name="" id="" placeholder="Email">
+                                    <input type="submit" value="Subscribe">
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                {% endif %}
+                </div>
             </div>
         </div>
-    </div>
-
+    </section>
 {% endblock %}
 
 {% block javascript %}
@@ -91,29 +149,95 @@
                 data: data,
                 success: function (response) {
                     const data = JSON.parse(response)
-                    $("#comment_container").prepend(`<div>
-                                ${data.full_name}
-                                <div class="mt-3">
-                                    <div>
-                                         ${data.content}
-                                    </div>
-                                    <div>
-                                        dislikse:<span id="dislike_count_container${data.comment_id}">${data.dislike_count}</span>
-                                        <br>
-                                        likes:<span id="like_count_container${data.comment_id}">${data.like_count}</span>
-                                    </div>
-                                    <div>
-                                        <button onclick="likeComment(${data.comment_id})">
-                                            like
-                                        </button>
-                                        <button onclick="likeComment(${data.comment_id} , false)">
-                                            dislike
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>`);
+                    $("#comment_container").prepend(`<li>
+                                                    <article class="comment">
+                                                        <section class="comment-details">
+                                                            <div class="author-name">
+                                                                <h5><a href="#">${data.full_name}</a></h5>
+                                                                <p>${data.update_at}</p>
+                                                            </div>
+                                                            <div class="comment-body">
+                                                                <p>${data.content}</p>
+                                                            </div>
+                                                            <div class="reply">
+                                                                <p>
+                                                            <span id="dislike_count_container${data.comment_id}">
+                                                                <i onclick="likeComment(${data.comment_id} , false)"
+                                                                   class="fa fa-thumbs-down"></i>${data.dislike_count}
+                                                            </span>
+                                                                    <span id="like_count_container${data.comment_id}">
+                                                                <i onclick="likeComment(${data.comment_id}"
+                                                                   class="fa fa-thumbs-up"></i>${data.like_count}
+                                                            </span>
+                                                                    <span>
+                                                                <i class="fa fa-reply" aria-hidden="true"></i>
+                                                            </span>
+                                                                </p>
+                                                            </div>
+                                                        </section>
+                                                    </article>
+
+                                                </li>`);
                 }
             });
         }, false);
     </script>
 {% endblock %}
+
+
+<div class="container">
+    <div class="card" style="width:100%">
+        <img class="card-img-top" src="{{ post.image.url }}" alt="Card image cap">
+        <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            {% if settings.author %}
+                <p>
+                    نویسنده: {{ author.first_name }} {{ author.last_name }}
+                </p>
+            {% endif %}
+            <p> دسته بندی: <a href="{% url 'category_single' category.slug %}">{{ category.title }}</a>
+                تاریخ انتشار: {{ post.publish_time }}
+            </p>
+            <p class="card-text">
+                {{ post.content }}
+            </p>
+            {% if settings.allow_discussion %}
+                {% if settings.comment %}
+                    <form id="comment_form">
+                        {% csrf_token %}
+                        {% include 'component/form.html' %}
+                        <input type="submit" value="ok">
+                    </form>
+                {% endif %}
+                <div id="comment_container">
+                    {% for comment in comments %}
+                        <div>
+                            {{ comment.author.full_name }}
+                            <div class="mt-3">
+                                <div>
+                                    {{ comment.content }}
+                                </div>
+                                <div>
+                                    dislikse:<span
+                                        id="dislike_count_container{{ comment.id }}">{{ comment.dislike_count }}</span>
+                                    <br>
+                                    likes:<span
+                                        id="like_count_container{{ comment.id }}">{{ comment.like_count }}</span>
+                                </div>
+
+                                <div>
+                                    <button onclick="likeComment({{ comment.id }})">
+                                        like
+                                    </button>
+                                    <button onclick="likeComment({{ comment.id }} , false)">
+                                        dislike
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

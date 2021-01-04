@@ -3,28 +3,123 @@
 {% block title %} Posts Archive
 {% endblock %}
 {% block body %}
-    <div class="row ">
-        <div class="col-md-12 d-flex justify-content-center mb-5">
-            {% for category in categories %}
-                <a href="{% url 'category_single' category.slug %}">
-                    <button type="button" class="btn btn-outline-black ">{{ category.title }}</button>
-                </a>
-            {% endfor %}
-        </div>
-
-        <div class="col-md-12 d-flex justify-content-start flex-wrap">
-            {% for post in post_list %}
-
-                <div class="card col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3" style="width: 18rem;">
-                    <a href="{% url 'post_single' post.slug %}" data-size="1600x1067"><img class="card-img-top"
-                                                                                           src="{{ post.image.url }}"
-                                                                                           alt="{{ post.title }}"></a>
-                    <div class="card-body" style="text-align: left">
-                        <p class="card-text">{{ post.title }}</p>
+    <section class="bg-text-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="bg-text">
+                        <h3>Sports Quotes</h3>
+                        <p> “I don’t count my situps. I only start counting once it starts hurting. ” -Muhammad Ali </p>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
         </div>
+    </section>
+    <section class="blog-post-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 ">
+                <div class="d-flex justify-content-center mb-5">
+                    {% for category in categories %}
+                        <a href="{% url 'category_single' category.slug %}">
+                            <button type="button" class="btn btn-outline-black ">{{ category.title }}</button>
+                        </a>
+                    {% endfor %}
+                </div>
 
-    </div>
+                </div>
+
+                <div class="col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3">
+                    {% for post in post_list %}
+                        <div class="single-post">
+                            <img src="{{ post.image.url }}" alt="">
+                            <h3><a href="#">{{ post.title }}</a></h3>
+                            <h4><span>Posted By: <span class="author-name">{{ post.author.full_name }}</span></span>
+                            </h4>
+                            <h4><span>{{ post.publish_time }}</span></h4>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-12 d-flex justify-content-start flex-wrap ">
+                    {% for post in post_list %}
+
+                        <div class="card col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 " style="width: 18rem;">
+                            <a href="{% url 'post_single' post.slug %}" data-size="1600x1067"><img
+                                    class="card-img-top"
+                                    src="{{ post.image.url }}"
+                                    alt="{{ post.title }}"></a>
+
+                            <div class="card-body" style="text-align: left">
+                                <p class="card-text">{{ post.title }}</p>
+                            </div>
+                            <h4><span>Posted By: <span class="author-name">{{ post.author.full_name }}</span></span>
+                            </h4>
+                            <h4><span>{{ post.publish_time }}</span></h4>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {#                                <div class="col-md-12 d-flex justify-content-center mb-5">#}
+                {#                                    {% for category in categories %}#}
+                {#                                        <a href="{% url 'category_single' category.slug %}">#}
+                {#                                            <button type="button" class="btn btn-outline-black ">{{ category.title }}</button>#}
+                {#                                        </a>#}
+                {#                                    {% endfor %}#}
+                {#                                </div>#}
+                {#                                <div class="col-md-12 d-flex justify-content-start flex-wrap ">#}
+                {#                                    {% for post in post_list %}#}
+                {##}
+                {#                                        <div class="card col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 " style="width: 18rem;">#}
+                {#                                            <a href="{% url 'post_single' post.slug %}" data-size="1600x1067"><img class="card-img-top"#}
+                {#                                                                                                                   src="{{ post.image.url }}"#}
+                {#                                                                                                                   alt="{{ post.title }}"></a>#}
+                {##}
+                {#                                            <div class="card-body" style="text-align: left">#}
+                {#                                                <p class="card-text">{{ post.title }}</p>#}
+                {#                                            </div>#}
+                {#                                            <h4><span>Posted By: <span class="author-name">{{ post.author.full_name }}</span></span>#}
+                {#                                            </h4>#}
+                {#                                            <h4><span>{{ post.publish_time }}</span></h4>#}
+                {#                                        </div>#}
+                {#                                    {% endfor %}#}
+                {#                                </div>#}
+            </div>
+        </div>
+        <div class="pegination">
+            <div class="nav-links">
+                <span class="page-numbers current">1</span>
+                <a class="page-numbers" href="#">2</a>
+                <a class="page-numbers" href="#">3</a>
+                <a class="page-numbers" href="#">4</a>
+                <a class="page-numbers" href="#">5</a>
+                <a class="page-numbers" href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </section>
 {% endblock %}
+
+{#    <div class="row ">#}
+{#        <div class="col-md-12 d-flex justify-content-center mb-5">#}
+{#            {% for category in categories %}#}
+{#                <a href="{% url 'category_single' category.slug %}">#}
+{#                    <button type="button" class="btn btn-outline-black ">{{ category.title }}</button>#}
+{#                </a>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{##}
+{#        <div class="col-md-12 d-flex justify-content-start flex-wrap">#}
+{#            {% for post in post_list %}#}
+{##}
+{#                <div class="card col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3" style="width: 18rem;">#}
+{#                    <a href="{% url 'post_single' post.slug %}" data-size="1600x1067"><img class="card-img-top"#}
+{#                                                                                           src="{{ post.image.url }}"#}
+{#                                                                                           alt="{{ post.title }}"></a>#}
+{#                    <div class="card-body" style="text-align: left">#}
+{#                        <p class="card-text">{{ post.title }}</p>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#        </div>#}
+{##}
+{#    </div>#}
